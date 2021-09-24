@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+model Unidade {
+  id    Int     @id @default(autoincrement())
+  razao  String
+  Usuarios Usuario[]
+  Prdutos Produto[]
+  Timelines Timeline[]
+}
+model Tipo {
+  id    Int     @id @default(autoincrement())
+  nometipo  String
+  Fluxos Fluxo[]
+  Produtos Produto[]
+  Timelines Timeline[]
+}
+model Estado {
+  id    Int     @id @default(autoincrement())
+  nomeestado  String
+  nomeatual  String
+  Timelines Timeline[]
+}
+model Nivel {
+  id    Int     @id @default(autoincrement())
+  nomenivel  String
+  Usuarios Usuario[]
+}
+model Usuario {
+  id    Int     @id @default(autoincrement())
+  email String  @unique
+  nome  String
+  matricula String  @unique
+  senha String
+  unidade    Unidade?   @relation(fields: [unidadeId], references: [id])
+  unidadeId  Int?
+  nivel    Nivel?   @relation(fields: [nivelId], references: [id])
+  nivelId  Int?
+}
+model Produto {
+  id    Int     @id @default(autoincrement())
+  code String
+  idcli String
+
+  unidade    Unidade?   @relation(fields: [unidadeId], references: [id])
+  unidadeId  Int?
+
+  tipo    Tipo?   @relation(fields: [tipoId], references: [id])
+  tipoId  Int?
+
+}
+model Fluxo {
+  id    Int     @id @default(autoincrement())
+  descricao String  @unique
+  tipo    Tipo?   @relation(fields: [tipoId], references: [id])
+  tipoId  Int?
+  Timelines Timeline[]
+}
+model Timeline {
+  id    Int     @id @default(autoincrement())
+  obs String
+  codigo String 
+
+  tipo    Tipo?   @relation(fields: [tipoId], references: [id])
+  tipoId  Int?
+
+  fluxo    Fluxo?   @relation(fields: [fluxoId], references: [id])
+  fluxoId  Int?
+
+  unidade    Unidade?   @relation(fields: [unidadeId], references: [id])
+  unidadeId  Int?
+
+  estado    Estado?   @relation(fields: [estadoId], references: [id])
+  estadoId  Int?
+}
+
